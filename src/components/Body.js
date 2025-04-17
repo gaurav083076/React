@@ -1,8 +1,8 @@
 import RestaurantCard from "./RestuarantCard";
-import RestaurantData from "../utils/mockData";
 import { useState,useEffect } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router";
+import useOnlineStatus from "../utils/useOnlineStatus";
 const Body = () => {
     const [detail,setDetail] = useState([]);
     const [filteredDetail,setFilteredDetail] = useState([]);
@@ -15,9 +15,14 @@ const Body = () => {
         const json = await data.json();
         console.log(json);
         // optional chaining
-        setDetail(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
-        setFilteredDetail(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+        setDetail(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
+        setFilteredDetail(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
     }
+    const onlineStatus = useOnlineStatus();
+
+    if (onlineStatus === false)
+        return <h1>You are offline.</h1>;
+
     //condtional rendering 
     if (detail.length === 0)
             return <Shimmer />;
