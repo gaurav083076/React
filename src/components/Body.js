@@ -1,4 +1,4 @@
-import RestaurantCard from "./RestuarantCard";
+import RestaurantCard, { withPromotedLabel } from "./RestuarantCard";
 import { useState,useEffect } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router";
@@ -6,6 +6,7 @@ import useOnlineStatus from "../utils/useOnlineStatus";
 const Body = () => {
     const [detail,setDetail] = useState([]);
     const [filteredDetail,setFilteredDetail] = useState([]);
+    const RestaurantCardPromoted = withPromotedLabel(RestaurantCard);
     useEffect(() => {fetchData()},[]);
     const [searchText,setSearchText] = useState("");
     const fetchData = async () => {
@@ -27,19 +28,27 @@ const Body = () => {
     if (detail.length === 0)
             return <Shimmer />;
     return (
-    <div className="body">
-        <div className="filter">
-            <div className="search">
-                <input type="text" className="search-box" value={searchText} onChange={(e) =>   {
+    <div className="body bg-white-100">
+        <div className="filter flex">
+            <div className="search m-4 p-4">
+                <input type="text" 
+                className="border border-solid border-black" 
+                value={searchText} 
+                onChange={(e) =>   {
                     setSearchText(e.target.value)
                 }}/>
-                <button onClick= {() => {
+                <button 
+                className="search px-4 py-2 bg-green-100 m-4 rounded-lg" 
+                onClick= {() => {
                     const filteredRes = detail.filter((res) => res.info.name.toLowerCase().includes(searchText.toLowerCase()));
                     setFilteredDetail(filteredRes);
-                }}>Search</button>
+                }}>
+                    Search
+                </button>
             </div>
+            <div className="search m-4 p-4 flex items-center">
             <button 
-            className="filter-btn" 
+            className="px-4 py-2 bg-gray-100 rounded-lg" 
             onClick = {() => {
                 const filteredData = detail.filter(
                 (res) => res.info.avgRating > 4.5
@@ -47,12 +56,13 @@ const Body = () => {
             setFilteredDetail(filteredData);
             }}
             >Top Rated Restaurants</button>
+            </div>
         </div>
-        <div className="restro-container">
+        <div className="restro-container flex flex-wrap">
             {
                 filteredDetail.map((restaurant) => (
                 <Link key={restaurant.info.id} to={"/restaurants/" + restaurant.info.id}>
-                  <RestaurantCard resData = {restaurant}/>
+                  {restaurant.info.promoted ? <RestaurantCardPromoted resData = {restaurant}/> : <RestaurantCard resData = {restaurant}/>}
                 </Link>
                
             )
